@@ -111,6 +111,7 @@
   .mp-item span{display:inline-block;font-family:'Anybody';font-size:80px;line-height:83px;
                 font-variation-settings:'wght' 600,'wdth' 70;color:#000;transform:translateY(110%);}
   .menu-panel.open .mp-item span{transform:translateY(0);transition:transform .75s cubic-bezier(.22,1,.36,1);}
+  .menu-panel.closing .mp-item span{transform:translateY(0);transition:none;}
   .mp-item.lang{font-size:36px;}
   .mp-item.lang span{font-size:36px;line-height:37px;}
 </style>
@@ -220,11 +221,11 @@
   <div class="menu-panel" id="menuPanel">
     <div class="mp-inner" id="mpInner">
       <div class="mp-item" style="top:299px;cursor:pointer" onclick="location.href='work.html'"><span style="transition-delay:.10s">Work</span></div>
-      <div class="mp-item" style="top:422px;cursor:pointer" onclick="location.href='a-better-world.html'"><span style="transition-delay:.18s">A-Better-World</span></div>
-      <div class="mp-item" style="top:515px"><span style="transition-delay:.26s">Blog</span></div>
-      <div class="mp-item" style="top:608px"><span style="transition-delay:.34s">RIO Lab</span></div>
-      <div class="mp-item" style="top:731px;cursor:pointer" onclick="location.href='contact.html'"><span style="transition-delay:.42s">Contact</span></div>
-      <div class="mp-item lang" style="top:1013px"><span style="transition-delay:.50s">EN / VI</span></div>
+      <div class="mp-item" style="top:407px;cursor:pointer" onclick="location.href='a-better-world.html'"><span style="transition-delay:.20s">A-Better-World</span></div>
+      <div class="mp-item" style="top:515px"><span style="transition-delay:.30s">Blog</span></div>
+      <div class="mp-item" style="top:623px"><span style="transition-delay:.40s">RIO Lab</span></div>
+      <div class="mp-item" style="top:731px;cursor:pointer" onclick="location.href='contact.html'"><span style="transition-delay:.50s">Contact</span></div>
+      <div class="mp-item lang" style="top:1013px"><span style="transition-delay:.60s">EN / VI</span></div>
     </div>
   </div>
 
@@ -265,7 +266,11 @@ function fitAll(){
 // Menu <-> Close: same element morphs, panel slides in/out
 const _panel=document.getElementById('menuPanel'), _toggle=document.getElementById('menuToggle');
 let menuOpen=false;
-function setMenu(open){ menuOpen=open; _panel.classList.toggle('open',open); _toggle.textContent=open?'Close':'Menu'; }
+function setMenu(o){ menuOpen=o;
+  if(o){ _panel.classList.remove('closing'); _panel.classList.add('open'); _toggle.textContent='Close'; } // open: stagger reveal (CSS)
+  else { // close: .closing holds full text at 0 → slides OUT intact with panel (no crop); reset after panel exits
+    _panel.classList.add('closing'); _panel.classList.remove('open'); _toggle.textContent='Menu';
+    setTimeout(()=>{ if(!menuOpen) _panel.classList.remove('closing'); },650); } }
 _toggle.addEventListener('click',()=>setMenu(!menuOpen));
 document.addEventListener('keydown',e=>{ if(e.key==='Escape')setMenu(false); });
 window.addEventListener('resize', fitAll);

@@ -6,6 +6,7 @@
 <title>RIO — A Better World</title>
 <style>
   @font-face{font-family:'Anybody';src:url('assets/fonts/Anybody.ttf') format('truetype-variations');font-weight:100 900;font-stretch:50% 150%;font-display:swap;}
+  @font-face{font-family:'RIO Phoong Beta';src:url('assets/fonts/RIOPHOONGBETA.otf') format('opentype');font-display:swap;}
   *{margin:0;padding:0;box-sizing:border-box;}
   html{overflow-x:clip;}
   html,body{background:#fff;}
@@ -31,6 +32,7 @@
   .mp-item span{display:inline-block;font-family:'Anybody';font-size:80px;line-height:83px;font-variation-settings:'wght' 600,'wdth' 70;color:#000;transform:translateY(110%);transition:color .25s ease;}
   .mp-item a:hover span{color:#FF5A1F;}
   .menu-panel.open .mp-item span{transform:translateY(0);transition:transform .75s cubic-bezier(.22,1,.36,1),color .25s ease;}
+  .menu-panel.closing .mp-item span{transform:translateY(0);transition:none;}
   .mp-item.lang span{font-size:36px;line-height:37px;}
 
   /* ---------- SECTION 1 — hero: dải SVG uốn cong thành vành đai quanh hình tròn ---------- */
@@ -62,7 +64,7 @@
   .p0cap .cur{display:inline-block;}
   /* morph words mask-reveal — 200px theo Figma */
   .mword{position:absolute;left:0;top:445px;width:1920px;height:250px;text-align:center;overflow:hidden;z-index:3;}
-  .mword span{display:inline-block;color:#fff;font-size:200px;line-height:250px;font-variation-settings:'wght' 700,'wdth' 70;white-space:nowrap;transform:translateY(110%);transition:transform .9s cubic-bezier(.16,1,.3,1);will-change:transform;}
+  .mword span{display:inline-block;color:#fff;font-family:'RIO Phoong Beta',sans-serif;font-size:200px;line-height:250px;white-space:nowrap;transform:translateY(110%);transition:transform .9s cubic-bezier(.16,1,.3,1);will-change:transform;}
   /* phase-4: icon center, chữ đè lên trên */
   #iconcycle{position:absolute;left:50%;top:50%;width:592px;height:592px;transform:translate(-50%,-50%);opacity:0;transition:opacity .6s ease;z-index:2;}
   #iconcycle img{width:100%;height:100%;}
@@ -112,11 +114,11 @@
   <div class="menu-panel" id="menuPanel">
     <div class="mp-inner" id="mpInner">
       <div class="mp-item" style="top:299px"><a href="work.html"><span style="transition-delay:.10s">Work</span></a></div>
-      <div class="mp-item" style="top:422px"><a href="a-better-world.html"><span style="transition-delay:.18s">A-Better-World</span></a></div>
-      <div class="mp-item" style="top:515px"><a href="#"><span style="transition-delay:.26s">Blog</span></a></div>
-      <div class="mp-item" style="top:608px"><a href="#"><span style="transition-delay:.34s">RIO Lab</span></a></div>
-      <div class="mp-item" style="top:731px"><a href="contact.html"><span style="transition-delay:.42s">Contact</span></a></div>
-      <div class="mp-item lang" style="top:1013px"><a href="#"><span style="transition-delay:.50s">EN / VI</span></a></div>
+      <div class="mp-item" style="top:407px"><a href="a-better-world.html"><span style="transition-delay:.20s">A-Better-World</span></a></div>
+      <div class="mp-item" style="top:515px"><a href="#"><span style="transition-delay:.30s">Blog</span></a></div>
+      <div class="mp-item" style="top:623px"><a href="#"><span style="transition-delay:.40s">RIO Lab</span></a></div>
+      <div class="mp-item" style="top:731px"><a href="contact.html"><span style="transition-delay:.50s">Contact</span></a></div>
+      <div class="mp-item lang" style="top:1013px"><a href="#"><span style="transition-delay:.60s">EN / VI</span></a></div>
     </div>
   </div>
 
@@ -275,7 +277,10 @@ window.addEventListener('resize',fitAll);
 // menu
 const _panel=document.getElementById('menuPanel'),_toggle=document.getElementById('menuToggle');
 let menuOpen=false;
-function setMenu(o){menuOpen=o;_panel.classList.toggle('open',o);_toggle.textContent=o?'Close':'Menu';}
+function setMenu(o){ menuOpen=o;
+  if(o){ _panel.classList.remove('closing'); _panel.classList.add('open'); _toggle.textContent='Close'; }
+  else { _panel.classList.add('closing'); _panel.classList.remove('open'); _toggle.textContent='Menu';
+    setTimeout(()=>{ if(!menuOpen) _panel.classList.remove('closing'); },650); } }
 _toggle.addEventListener('click',()=>setMenu(!menuOpen));
 document.addEventListener('keydown',e=>{if(e.key==='Escape')setMenu(false);});
 
