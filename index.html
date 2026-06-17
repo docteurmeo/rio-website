@@ -451,6 +451,17 @@ window.addEventListener('wheel', e=>{
   targetY = clampY(targetY + e.deltaY * 1.0);
   if(!smoothing_run){ smoothing_run=true; requestAnimationFrame(smoothStep); }
 }, {passive:false});
+// touch support (iPad/mobile)
+let _ty0=0;
+window.addEventListener('touchstart', e=>{ _ty0=e.touches[0].clientY; }, {passive:true});
+window.addEventListener('touchmove', e=>{
+  if(e.touches.length>1) return; // allow pinch-zoom
+  const delta = _ty0 - e.touches[0].clientY;
+  _ty0 = e.touches[0].clientY;
+  e.preventDefault();
+  targetY = clampY(targetY + delta * 1.5);
+  if(!smoothing_run){ smoothing_run=true; requestAnimationFrame(smoothStep); }
+}, {passive:false});
 // keep target in sync when scrolled by other means (scrollbar drag, keys, anchor)
 window.addEventListener('scroll', ()=>{ if(!smoothing_run){ targetY = curY = window.scrollY; } }, {passive:true});
 window.addEventListener('keydown', ()=>{ if(!smoothing_run){ targetY = curY = window.scrollY; } });

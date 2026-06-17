@@ -463,6 +463,35 @@ function onWheel(e){
 }
 window.addEventListener('wheel',onWheel,{passive:false});
 
+/* --- touch support (iPad/mobile) --- */
+let _ty0=0, _tAcc=0;
+window.addEventListener('touchstart',e=>{
+  if(e.touches.length>1) return;
+  _ty0=e.touches[0].clientY; _tAcc=0;
+},{passive:true});
+window.addEventListener('touchmove',e=>{
+  if(e.touches.length>1) return;
+  const delta=_ty0-e.touches[0].clientY;
+  _ty0=e.touches[0].clientY;
+  if(locked){
+    e.preventDefault();
+    _tAcc+=delta;
+    if(Math.abs(_tAcc)>40){
+      const dir=_tAcc>0?1:-1; _tAcc=0;
+      if(!cool()) return;
+      if(dir>0){ if(morphStep<4) goStep(morphStep+1); else{ unlockMorph(); freeScroll(delta*8); } }
+      else     { if(morphStep>0) goStep(morphStep-1); else{ unlockMorph(); freeScroll(delta*8); } }
+    }
+  } else {
+    e.preventDefault();
+    const mTop=morph.offsetTop;
+    const cur=targetY;
+    if(delta>0 && cur<mTop && cur+delta*8>=mTop){ lockMorph(0); return; }
+    if(delta<0 && cur>mTop && cur+delta*8<=mTop){ lockMorph(4); return; }
+    freeScroll(delta*1.5);
+  }
+},{passive:false});
+
 /* --- smooth scroll inertia (ngoài morph) --- */
 let targetY=window.scrollY,curY=window.scrollY,running=false;
 function raf(){
