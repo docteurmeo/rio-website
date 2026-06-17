@@ -406,6 +406,10 @@ function lockMorph(startStep){
   window.scrollTo(0,lockY);
   if(!morphEntered){ morphEntered=true; rioword.style.opacity='1'; } // appear logo
   goStep(startStep);
+  // gate the momentum tail of the SAME gesture (trackpad inertia / residual touchmove)
+  // — otherwise the entering swipe immediately advances step 0→1 = flash. (bài học #12)
+  wheelCooldown=true; setTimeout(()=>{wheelCooldown=false;},760);
+  _tAcc=0;
 }
 function unlockMorph(){ locked=false; document.body.classList.remove('ondark'); }
 
