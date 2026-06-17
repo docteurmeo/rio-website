@@ -1,0 +1,10 @@
+# dependencies
+node_modules/
+
+# debug / generated artifacts
+*_debug*.png
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
