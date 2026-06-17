@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RIO — Home (full)</title>
+<style>
+  /* self-hosted Anybody variable font (Width + Weight axes) — reliable font-variation-settings */
+  @font-face{
+    font-family:'Anybody';
+    src:url('assets/fonts/Anybody.ttf') format('truetype-variations');
+    font-weight:100 900;
+    font-stretch:50% 150%;
+    font-display:swap;
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{overflow-x:clip;}  /* clip (not hidden) so position:sticky still works */
+  html,body{background:#fff;}
+  body{font-family:'Anybody',sans-serif;}
+  img{display:block;}
+
+  /* generic width-scaled section: .inner is 1920-wide design space */
+  .sec{position:relative;width:100vw;overflow:hidden;}
+  .sec>.inner{position:absolute;top:0;left:0;width:1920px;transform-origin:top left;}
+
+  /* ---------- HERO (Menu 135 + Pallete 960) ---------- */
+  .menubar{position:absolute;left:0;top:0;width:1920px;height:135px;background:#fff;z-index:40;}
+  .menubar .logo{position:absolute;left:36px;top:30px;width:121px;height:76px;opacity:0;transform:translateX(-140px);}
+  .menubar .logo img{width:100%;height:100%;}
+  .menubar .menu{position:absolute;right:36px;top:66px;width:100px;height:44px;opacity:0;transform:translateX(140px);}
+  .menubar .menu img{width:100%;height:100%;}
+  #hero.intro .logo{animation:slideX .9s cubic-bezier(.22,1,.36,1) .15s forwards;}
+  #hero.intro .menu{animation:slideX .9s cubic-bezier(.22,1,.36,1) .15s forwards;}
+  @keyframes slideX{to{opacity:1;transform:translateX(0);}}
+  .pallete{position:absolute;left:0;top:135px;width:1920px;height:960px;overflow:hidden;}
+  #stage{position:absolute;inset:0;z-index:20;}
+  .icon{position:absolute;width:120px;height:120px;opacity:0;transform:scale(.7);will-change:opacity,transform;pointer-events:none;}
+  .icon img{width:100%;height:100%;}
+  .heading{position:absolute;left:28px;top:323px;width:1848px;height:214px;z-index:1;pointer-events:none;}
+  .heading>div{position:absolute;inset:0;}
+  .heading svg{width:1848px;height:214px;overflow:visible;}
+  .h-outline{opacity:0;}
+  #hero.intro .h-outline{animation:olin 2.2s ease .15s forwards;}
+  @keyframes olin{0%{opacity:0;}22%{opacity:1;}75%{opacity:1;}100%{opacity:0;}}
+  .h-fill{--p:0;-webkit-mask-image:linear-gradient(90deg,#000 calc(var(--p)*2008px - 160px),transparent calc(var(--p)*2008px));mask-image:linear-gradient(90deg,#000 calc(var(--p)*2008px - 160px),transparent calc(var(--p)*2008px));-webkit-mask-repeat:no-repeat;mask-repeat:no-repeat;}
+  .para{position:absolute;left:508px;top:637px;width:904px;z-index:30;pointer-events:none;font-weight:600;font-size:48px;line-height:50px;font-variation-settings:'wght' 600,'wdth' 75;text-align:center;white-space:nowrap;color:#000;opacity:0;transform:translateY(18px);}
+  #hero.intro .para{animation:paraIn .9s cubic-bezier(.22,1,.36,1) 1.15s forwards;}
+  @keyframes paraIn{to{opacity:1;transform:translateY(0);}}
+
+  /* ---------- SECTION 2 — Highlight Projects (pinned scroll-jack) ---------- */
+  #s2{position:relative;width:100vw;background:#fff;}
+  .s2sticky{position:sticky;top:0;height:100vh;width:100vw;overflow:hidden;background:#fff;}
+  .s2inner{position:absolute;top:0;left:0;width:1920px;height:1500px;transform-origin:top left;}
+  .hl-word{position:absolute;left:15px;top:100px;width:1863px;height:605px;z-index:1;opacity:0;}
+  .hl-word img{width:1863px;height:605px;}
+  @keyframes hlIn{to{opacity:1;transform:translateY(0);}}
+  .pcard{position:absolute;left:0;top:345px;width:1864px;height:846px;z-index:2;background:#cfcfcf;overflow:hidden;opacity:0;}
+  .pcard .ph{position:absolute;inset:0;background:#cfcfcf center/cover no-repeat;}
+  .pcard .pname{position:absolute;left:30px;top:20px;color:#fff;font-weight:600;font-size:128px;line-height:1;font-variation-settings:'wght' 600,'wdth' 75;}
+
+  /* ---------- SECTION 3 — Clients ---------- */
+  .s3-h{position:absolute;left:36px;top:100px;width:1848px;text-align:center;color:#000;font-weight:600;font-size:64px;font-variation-settings:'wght' 600,'wdth' 75;white-space:nowrap;}
+  .s3-h .cur{display:inline-block;width:4px;}
+  .logo-box{position:absolute;width:303px;height:202px;background:#fff;opacity:0;transform:translateY(20px);overflow:hidden;}
+  .logo-box img{width:100%;height:100%;object-fit:contain;padding:46px 56px;filter:grayscale(1);transition:filter .4s ease;}
+  .logo-box:hover img{filter:grayscale(0);}
+
+  /* ---------- SECTION 4 — What we do ---------- */
+  .s4-bg{position:absolute;left:0;top:0;width:1920px;height:1540px;background:#fff;}
+  .s4-title{position:absolute;left:36px;top:102px;font-size:80px;font-variation-settings:'wght' 600,'wdth' 70;color:#000;}
+  .s4-item{position:absolute;left:0;width:1920px;opacity:0;transform:translateY(30px);}
+  .s4-num{position:absolute;font-size:80px;font-variation-settings:'wght' 600,'wdth' 70;color:#000;}
+  .s4-name{position:absolute;font-size:80px;line-height:83px;font-variation-settings:'wght' 600,'wdth' 70;color:#000;}
+  .s4-ico{position:absolute;width:64px;height:64px;}
+  .s4-ico img{width:100%;height:100%;}
+  .s4-desc{position:absolute;left:1135px;top:740px;width:749px;color:#747474;font-weight:400;font-size:16px;line-height:24px;font-variation-settings:'wght' 400,'wdth' 100;}
+  .s4-subh{position:absolute;font-weight:400;font-size:40px;line-height:60px;font-variation-settings:'wght' 400,'wdth' 90;color:#000;}
+  .s4-bd{position:absolute;width:749px;font-weight:400;font-size:16px;line-height:24px;color:#747474;font-variation-settings:'wght' 400,'wdth' 100;}
+  .s4-bl{position:absolute;width:749px;padding-left:24px;font-weight:700;font-size:16px;line-height:24px;color:#000;font-variation-settings:'wght' 700,'wdth' 100;}
+  .s4-bl .dot{position:absolute;left:8px;top:8px;width:8px;height:8px;border-radius:50%;background:#000;}
+  .s4-subline{position:absolute;left:1135px;width:749px;height:1px;background:#e2e2e2;}
+  .s4-line{position:absolute;left:664px;top:704px;width:1220px;height:1px;background:#e2e2e2;transform:scaleX(0);transform-origin:left;}
+  #s4.in .s4-item{animation:upIn .8s cubic-bezier(.22,1,.36,1) forwards;}
+  #s4.in .s4-line{animation:lineIn .8s ease .1s forwards;}
+  @keyframes upIn{to{opacity:1;transform:translateY(0);}}
+  @keyframes lineIn{to{transform:scaleX(1);}}
+
+  /* ---------- FOOTER ---------- */
+  .above{position:relative;z-index:2;background:#fff;}
+  #footer{position:fixed;left:0;bottom:0;width:100vw;z-index:1;background:#000;overflow:hidden;}
+  .ft-logo{position:absolute;left:36px;top:51px;width:69px;height:42px;filter:invert(1);}
+  .ft-logo img{width:100%;height:100%;}
+  .lets{position:absolute;left:29px;top:122px;width:1862px;height:450px;}
+  .lets svg{width:1862px;height:450px;overflow:visible;}
+  .lets path{fill:none;stroke:#fff;stroke-width:1.4;stroke-linejoin:round;}
+  .ft-t{position:absolute;color:#fff;font-weight:400;font-size:20px;line-height:30px;font-variation-settings:'wght' 400,'wdth' 100;}
+  /* footer reveal: elements hidden, revealed (staggered) by JS as the footer is uncovered */
+  .frev{opacity:0;transform:translateY(40px);will-change:opacity,transform;}
+
+  /* ---------- MENU SECTIONS overlay (slides in from right) ---------- */
+  .menubar .menu{cursor:pointer;}
+  .menu-panel{position:fixed;top:0;right:0;height:100vh;background:#fff;z-index:100;
+              transform:translateX(100%);transition:transform .6s cubic-bezier(.7,0,.2,1);overflow:hidden;}
+  .menu-panel.open{transform:translateX(0);}
+  .mp-inner{position:absolute;top:0;right:0;width:582px;height:1080px;transform-origin:top right;}
+  .menu-toggle{position:fixed;z-index:110;font-family:'Anybody';font-variation-settings:'wght' 400,'wdth' 70;
+               color:#000;cursor:pointer;line-height:1;user-select:none;}
+  .rio-logo{position:fixed;z-index:110;opacity:0;transform:translateX(-140px);animation:slideX .9s cubic-bezier(.22,1,.36,1) .15s forwards;}
+  .rio-logo img{width:100%;height:100%;display:block;}
+  .mp-item{position:absolute;right:36px;width:540px;text-align:right;overflow:hidden;line-height:83px;}
+  .mp-item span{display:inline-block;font-family:'Anybody';font-size:80px;line-height:83px;
+                font-variation-settings:'wght' 600,'wdth' 70;color:#000;transform:translateY(110%);}
+  .menu-panel.open .mp-item span{transform:translateY(0);transition:transform .75s cubic-bezier(.22,1,.36,1);}
+  .mp-item.lang{font-size:36px;}
+  .mp-item.lang span{font-size:36px;line-height:37px;}
+</style>
+</head>
+<body>
+<div class="above">
+
+  <!-- ============ HERO ============ -->
+  <div class="sec" id="heroSec"><div class="inner" id="hero">
+    <div class="menubar">
+    </div>
+    <div class="pallete" id="pallete">
+      <div id="stage"></div>
+      <div class="heading" id="headingEl"></div>
+      <div class="para">We are here for a better world and you are a part of it.</div>
+    </div>
+  </div></div>
+
+  <!-- ============ SECTION 2 — HIGHLIGHT PROJECTS (pinned) ============ -->
+  <div id="s2">
+    <div class="s2sticky">
+      <div class="s2inner" id="s2inner">
+        <div class="hl-word"><img src="assets/highlight.svg" alt="Highlight"></div>
+        <div class="pcard" data-i="0"><div class="ph"></div><div class="pname">HAPAS</div></div>
+        <div class="pcard" data-i="1"><div class="ph"></div><div class="pname">DWP5C</div></div>
+        <div class="pcard" data-i="2"><div class="ph"></div><div class="pname">Lotte Mall</div></div>
+        <div class="pcard" data-i="3"><div class="ph"></div><div class="pname">Lotte Mall</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ SECTION 3 — CLIENTS ============ -->
+  <div class="sec" id="s3"><div class="inner">
+    <div class="s3-h"><span id="s3type"></span><span class="cur" id="s3cur">|</span></div>
+    <div id="logos"></div>
+  </div></div>
+
+  <!-- ============ SECTION 4 — WHAT WE DO ============ -->
+  <div class="sec" id="s4"><div class="inner">
+    <div class="s4-bg"></div>
+    <div class="s4-title">What we do</div>
+
+    <!-- item 1 -->
+    <div class="s4-item">
+      <div class="s4-num" style="left:507px;top:101px">1.</div>
+      <div class="s4-name" style="left:574px;top:101px;width:320px">Sustainable Branding</div>
+      <div class="s4-ico" style="left:830px;top:190px"><img src="assets/s4-ico.svg" alt=""></div>
+      <div class="s4-subh" style="left:1135px;top:113px">Brand Strategy</div>
+      <div class="s4-bd" style="left:1135px;top:173px">Sustainable growth starts with being deeply rooted with your core authentic self, which is constantly cultivated and challenged to reach its highest potential through market interaction. We delve into your brand’s practical operation to uncover that kind of brand soul that promises to bring a meaningful and inspirational brand growth journey:</div>
+      <div class="s4-bl" style="left:1135px;top:305px"><span class="dot"></span>Empower your core value and unleash inner power</div>
+      <div class="s4-bl" style="left:1135px;top:345px"><span class="dot"></span>Live your values and break free from external pressure</div>
+      <div class="s4-bl" style="left:1135px;top:385px"><span class="dot"></span>Bring your brand to real life by genuine connection</div>
+      <div class="s4-subline" style="top:445px"></div>
+      <div class="s4-subh" style="left:1135px;top:481px">Brand Centric Design</div>
+      <div class="s4-bd" style="left:1135px;top:542px">We offer multiple assets, from brand identity, marcom materials, print design to exhibition / event designs. Sustainable design practices applied with attention towards the mutual aims:</div>
+      <div class="s4-bl" style="left:1135px;top:626px"><span class="dot"></span>Optimize budget</div>
+      <div class="s4-bl" style="left:1135px;top:666px"><span class="dot"></span>Maximize product life cycle</div>
+      <div class="s4-bl" style="left:1135px;top:706px"><span class="dot"></span>Easy to use</div>
+      <div class="s4-bl" style="left:1135px;top:746px"><span class="dot"></span>Practical functions</div>
+    </div>
+
+    <div class="s4-line" style="left:507px;top:820px;width:1377px"></div>
+
+    <!-- item 2 -->
+    <div class="s4-item">
+      <div class="s4-num" style="left:507px;top:870px">2.</div>
+      <div class="s4-name" style="left:576px;top:870px;width:456px">Communication for Social Behavior Change</div>
+      <div class="s4-ico" style="left:861px;top:953px"><img src="assets/s4-ico2.svg" alt=""></div>
+      <div class="s4-bd" style="left:1135px;top:870px">We have branding and creative expertise, but driven by the passion and ambition of a-better-world. Thus, we are always concerned with People and the Planet in every project. Sharing common purposes, we wish to bring our expertise and join hands with NGOs in creating a better world.</div>
+      <div class="s4-bl" style="left:1135px;top:1002px"><span class="dot"></span>Reframe the challenge to address the key issue for communication efficiency.</div>
+      <div class="s4-bl" style="left:1135px;top:1042px"><span class="dot"></span>Deep &amp; thorough understanding for touching insight.</div>
+      <div class="s4-bl" style="left:1135px;top:1082px"><span class="dot"></span>Original solutions that address challenges at their core.</div>
+    </div>
+
+    <div class="s4-line" style="left:507px;top:1169px;width:1377px"></div>
+
+    <!-- item 3 -->
+    <div class="s4-item">
+      <div class="s4-num" style="left:507px;top:1219px">3.</div>
+      <div class="s4-name" style="left:576px;top:1219px;width:505px">Creative Works for a better world</div>
+      <div class="s4-bd" style="left:1135px;top:1219px">For those who share our vision of building a better world, we welcome collaboration—creating work that inspires and drives positive impact.</div>
+    </div>
+  </div></div>
+
+</div><!-- /.above -->
+
+  <!-- ============ FOOTER ============ -->
+  <div class="sec" id="footer"><div class="inner">
+    <div class="ft-logo frev"><img src="assets/logo.svg" alt="RIO"></div>
+    <div class="lets" id="lets"></div>
+    <div class="ft-t frev" style="left:36px;top:621px;text-align:left">RIOffice</div>
+    <div class="ft-t frev" style="left:36px;top:666px;text-align:left">SH23 - H6 StarLake</div>
+    <div class="ft-t frev" style="left:36px;top:711px;text-align:left">Xuan Dinh, Hanoi</div>
+    <div class="ft-t frev" style="left:810px;top:621px;width:300px;text-align:center">+84 35 779 3667</div>
+    <div class="ft-t frev" style="left:810px;top:666px;width:300px;text-align:center">agency@rio.vn</div>
+    <div class="ft-t frev" style="left:810px;top:711px;width:300px;text-align:center">www.agency.rio.vn</div>
+    <div class="ft-t frev" style="left:1584px;top:621px;width:300px;text-align:right">Facebook</div>
+    <div class="ft-t frev" style="left:1584px;top:666px;width:300px;text-align:right">Instagram</div>
+    <div class="ft-t frev" style="left:1584px;top:711px;width:300px;text-align:right">Behance</div>
+  </div></div>
+
+  <!-- fixed RIO logo + Menu/Close toggle (stay on screen, above the panel) -->
+  <div class="rio-logo" id="rioLogo"><img src="assets/logo.svg" alt="RIO"></div>
+  <div class="menu-toggle" id="menuToggle">Menu</div>
+
+  <!-- ============ MENU SECTIONS (overlay) ============ -->
+  <div class="menu-panel" id="menuPanel">
+    <div class="mp-inner" id="mpInner">
+      <div class="mp-item" style="top:299px;cursor:pointer" onclick="location.href='work.html'"><span style="transition-delay:.10s">Work</span></div>
+      <div class="mp-item" style="top:422px;cursor:pointer" onclick="location.href='a-better-world.html'"><span style="transition-delay:.18s">A-Better-World</span></div>
+      <div class="mp-item" style="top:515px"><span style="transition-delay:.26s">Blog</span></div>
+      <div class="mp-item" style="top:608px"><span style="transition-delay:.34s">RIO Lab</span></div>
+      <div class="mp-item" style="top:731px;cursor:pointer" onclick="location.href='contact.html'"><span style="transition-delay:.42s">Contact</span></div>
+      <div class="mp-item lang" style="top:1013px"><span style="transition-delay:.50s">EN / VI</span></div>
+    </div>
+  </div>
+
+<script>
+const DESIGN_W = 1920;
+let scale = 1;
+
+// section design heights
+const SECS = [
+  {el:'heroSec', h:1095},
+  {el:'s3',      h:1141},
+  {el:'s4',      h:1540},
+  {el:'footer',  h:793},
+];
+
+function fitAll(){
+  scale = window.innerWidth / DESIGN_W;
+  SECS.forEach(s=>{
+    const sec=document.getElementById(s.el);
+    sec.style.height=(s.h*scale)+'px';
+    sec.querySelector('.inner').style.transform='scale('+scale+')';
+    sec.querySelector('.inner').style.height=s.h+'px';
+  });
+  // scroll room = footer height (reveal) + 1 viewport extra (slow "Let's talk" draw after fully revealed)
+  document.querySelector('.above').style.marginBottom=(793*scale + window.innerHeight)+'px';
+  // menu overlay scales by viewport height so all items fit
+  const mpScale=window.innerHeight/1080;
+  document.getElementById('menuPanel').style.width=(582*mpScale)+'px';
+  document.getElementById('mpInner').style.transform='scale('+mpScale+')';
+  // toggle sits exactly where the hero header "Menu" is (scaled by width)
+  const mt=document.getElementById('menuToggle');
+  mt.style.right=(36*scale)+'px'; mt.style.top=(55*scale)+'px'; mt.style.fontSize=(64*scale)+'px';
+  const rl=document.getElementById('rioLogo');
+  rl.style.left=(36*scale)+'px'; rl.style.top=(30*scale)+'px';
+  rl.style.width=(121*scale)+'px'; rl.style.height=(76*scale)+'px';
+  layoutS2();
+}
+// Menu <-> Close: same element morphs, panel slides in/out
+const _panel=document.getElementById('menuPanel'), _toggle=document.getElementById('menuToggle');
+let menuOpen=false;
+function setMenu(open){ menuOpen=open; _panel.classList.toggle('open',open); _toggle.textContent=open?'Close':'Menu'; }
+_toggle.addEventListener('click',()=>setMenu(!menuOpen));
+document.addEventListener('keydown',e=>{ if(e.key==='Escape')setMenu(false); });
+window.addEventListener('resize', fitAll);
+
+/* ---------------- HERO: icons reveal + ink soak ---------------- */
+const stage=document.getElementById('stage'), pallete=document.getElementById('pallete'), hero=document.getElementById('hero');
+let items=[], mouse={x:-9999,y:-9999,active:false}, introDone=false;
+const R=280,MAXS=1.55,EIN=.30,EOUT=.055;
+fetch('layout.json').then(r=>r.json()).then(d=>{
+  for(const ic of d.icons){
+    const el=document.createElement('div');el.className='icon';el.style.left=ic.x+'px';el.style.top=ic.y+'px';
+    const im=document.createElement('img');im.src='output/'+ic.n+'.svg';el.appendChild(im);stage.appendChild(el);
+    items.push({el,cx:ic.x+60,cy:ic.y+60,cur:0});
+  }
+  requestAnimationFrame(heroLoop);
+});
+// track cursor globally (client coords); -1 means cursor not over the document
+let cx=-1, cy=-1;
+window.addEventListener('mousemove', e=>{ cx=e.clientX; cy=e.clientY; }, {passive:true});
+window.addEventListener('mouseout', e=>{ if(!e.relatedTarget && !e.toElement){ cx=-1; cy=-1; } });
+window.addEventListener('blur', ()=>{ cx=-1; cy=-1; });
+function heroLoop(){
+  // hit-test the pallete every frame so scrolling (which fires no mousemove) still updates reveal
+  const r=pallete.getBoundingClientRect();
+  const inside = cx>=0 && cx>=r.left && cx<=r.right && cy>=r.top && cy<=r.bottom;
+  mouse.active = inside && introDone;
+  if(inside){ mouse.x=(cx-r.left)/scale; mouse.y=(cy-r.top)/scale; }
+  for(const it of items){
+    let t=0;
+    if(mouse.active){const dx=it.cx-mouse.x,dy=it.cy-mouse.y,dd=Math.sqrt(dx*dx+dy*dy);if(dd<R){const u=1-dd/R;t=u*u*(3-2*u);}}
+    const k=t>it.cur?EIN:EOUT;it.cur+=(t-it.cur)*k;if(it.cur<.002)it.cur=0;
+    it.el.style.opacity=it.cur;it.el.style.transform='scale('+(0.7+(MAXS-0.7)*it.cur)+')';
+  }
+  requestAnimationFrame(heroLoop);
+}
+const easeIO=p=>p<.5?4*p*p*p:1-Math.pow(-2*p+2,3)/2;
+fetch('assets/heading.svg').then(r=>r.text()).then(svg=>{
+  const h=document.getElementById('headingEl');
+  const o=document.createElement('div');o.className='h-outline';o.innerHTML=svg;
+  const f=document.createElement('div');f.className='h-fill';f.innerHTML=svg;
+  const op=o.querySelector('path');op.setAttribute('fill','none');op.setAttribute('stroke','#1A2BE0');op.setAttribute('stroke-width','1.1');
+  h.appendChild(o);h.appendChild(f);
+  requestAnimationFrame(()=>{hero.classList.add('intro');
+    const DUR=1750,DELAY=350,t0=performance.now()+DELAY;
+    (function st(now){let p=(now-t0)/DUR;if(p<0)p=0;if(p>1)p=1;f.style.setProperty('--p',easeIO(p));if(p<1)requestAnimationFrame(st);else introDone=true;})(performance.now());
+  });
+});
+
+/* ---------------- SECTION 2: pinned card stack ---------------- */
+const s2=document.getElementById('s2'), s2inner=document.getElementById('s2inner');
+const cards=[...document.querySelectorAll('.pcard')];
+const CARD_OFFSET=90, FAN_BASE=-21; // stacking fan
+function cardTargetX(i){return FAN_BASE + i*CARD_OFFSET;}
+function layoutS2(){
+  // scale by WIDTH (Highlight full-width), vertically center the content band in viewport
+  const sc=window.innerWidth/1920;
+  const bandCenter=645;            // mid of Highlight(100..705)+cards(345..1191)
+  const ty=window.innerHeight/2 - bandCenter*sc;
+  s2inner.style.transform='translateY('+ty+'px) scale('+sc+')';
+  s2.style.height=(window.innerHeight + window.innerHeight*3)+'px'; // 100vh pin + scroll length for highlight + 4 cards
+}
+const BASE_X=28;      // full-width minus 28px padding (matches hero), cards fully cover each other
+const hlEl=document.querySelector('.hl-word');
+function updateS2(){
+  const rect=s2.getBoundingClientRect();
+  const pinLen=s2.offsetHeight-window.innerHeight;
+  let p=(-rect.top)/pinLen; if(p<0)p=0; if(p>1)p=1;
+
+  // Phase A: Highlight fades in + moves up with acceleration, then stays as background
+  const HL_END=0.12;
+  let ho=p/HL_END; if(ho>1)ho=1;
+  const he=easeIO(ho);                 // eased progress -> acceleration feel
+  hlEl.style.opacity=he;
+  hlEl.style.transform='translateY('+((1-he)*140)+'px)';  // rise 140px -> 0
+
+  // Phases B..: 4 cards, each over its own scroll segment after highlight
+  const segStart=0.14, segLen=(1-segStart)/cards.length;
+  cards.forEach((c,i)=>{
+    const a=segStart+i*segLen;
+    let lp=(p-a)/segLen; if(lp<0)lp=0; if(lp>1)lp=1; lp=easeIO(lp);
+    c.style.zIndex=2+i;
+    if(i===0){
+      // HAPAS: move up from below + fade in
+      const fromY=340;
+      c.style.opacity=lp;
+      c.style.transform='translate('+BASE_X+'px,'+(fromY*(1-lp))+'px)';
+    }else{
+      // slide in from right, fully cover previous (same BASE_X)
+      const x=BASE_X+(1920-BASE_X+60)*(1-lp);
+      c.style.opacity=lp>0?1:0;
+      c.style.transform='translateX('+x+'px)';
+    }
+  });
+}
+
+/* ---------------- SECTION 3: typewriter + logos ---------------- */
+const S3TEXT='Trusted by brands that choose to do good.';
+const s3type=document.getElementById('s3type'), s3cur=document.getElementById('s3cur');
+const logosWrap=document.getElementById('logos');
+const COLS=6, ROWS=4, BW=303, BH=202, GAP=6, GX=36, GY=216;
+const BRANDS=['google','apple','instagram','meta','netflix','spotify',
+  'airbnb','uber','nike','adidas','youtube','samsung',
+  'sony','intel','pinterest','reddit','dribbble','zoom',
+  'paypal','visa','mastercard','github','figma','tesla'];
+const boxes=[];
+let bi=0;
+for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++){
+  const b=document.createElement('div');b.className='logo-box';
+  b.style.left=(GX+c*(BW+GAP))+'px';b.style.top=(GY+r*(BH+GAP))+'px';
+  const im=document.createElement('img');im.src='https://cdn.simpleicons.org/'+BRANDS[bi%BRANDS.length];  // colored (CSS grayscales until hover)
+  im.onerror=()=>{im.style.display='none';};
+  b.appendChild(im); bi++;
+  logosWrap.appendChild(b);boxes.push(b);
+}
+
+// random photos into the 4 project thumbnails
+document.querySelectorAll('#s2inner .pcard').forEach((c,i)=>{
+  c.querySelector('.ph').style.backgroundImage="url('https://picsum.photos/seed/rio-proj-"+i+"/1692/846')";
+});
+let s3done=false;
+function runS3(){
+  if(s3done)return; s3done=true;
+  let i=0;
+  (function type(){ s3type.textContent=S3TEXT.slice(0,i); i++; if(i<=S3TEXT.length) setTimeout(type,28); else s3cur.style.opacity=0; })();
+  boxes.forEach((b,k)=>setTimeout(()=>{b.style.transition='opacity .5s ease, transform .5s cubic-bezier(.22,1,.36,1)';b.style.opacity=1;b.style.transform='translateY(0)';}, 400 + k*60));
+}
+new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)runS3();}),{threshold:.25}).observe(document.getElementById('s3'));
+
+/* ---------------- SECTION 4 + Footer: reveal on enter ---------------- */
+new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)document.getElementById('s4').classList.add('in');}),{threshold:.2}).observe(document.getElementById('s4'));
+
+/* ---------------- Footer reveal (verteal-style): front layer slides up, footer behind is uncovered; elements appear staggered ---------------- */
+const aboveEl=document.querySelector('.above');
+const footerEl=document.getElementById('footer');
+const frevs=[...footerEl.querySelectorAll('.frev')];
+// per-element start thresholds (DOM order: logo, lets, address, phone, email, web, fb, ig, behance) — non-synced
+const FTH=[0.16,0.40,0.30,0.38,0.46,0.34,0.42,0.50];
+// "Let's talk" as outline that draws itself in as the footer is uncovered
+let letsPath=null;
+fetch('assets/lets-talk.svg').then(r=>r.text()).then(svg=>{
+  const el=document.getElementById('lets'); el.innerHTML=svg;
+  letsPath=el.querySelector('path');
+  letsPath.setAttribute('pathLength','1');
+  letsPath.style.strokeDasharray='1'; letsPath.style.strokeDashoffset='1';
+  updateFooter();
+});
+function updateFooter(){
+  const aboveH=aboveEl.offsetHeight, fH=footerEl.offsetHeight, vh=window.innerHeight;
+  const rawVis=(window.scrollY+vh)-aboveH;     // px of black footer revealed (can exceed fH into extra scroll)
+  let rp=rawVis/fH; if(rp<0)rp=0; if(rp>1)rp=1; // contact elements reveal over the footer height
+  if(letsPath){
+    // draw starts when black covers ~70% of screen, finishes at end of the extra scroll → slow & deliberate
+    const startPx=0.70*vh, endPx=fH+vh;
+    let dp=(rawVis-startPx)/(endPx-startPx); if(dp<0)dp=0; if(dp>1)dp=1;
+    letsPath.style.strokeDashoffset=(1-easeIO(dp)).toFixed(4);
+  }
+  frevs.forEach((el,i)=>{
+    const t=FTH[i%FTH.length];
+    let l=(rp-t)/0.28; if(l<0)l=0; if(l>1)l=1; l=easeIO(l);
+    el.style.opacity=l;
+    el.style.transform='translateY('+((1-l)*40)+'px)';
+  });
+}
+
+/* ---------------- scroll loop ---------------- */
+function onScroll(){ updateS2(); updateFooter(); }
+window.addEventListener('scroll', onScroll, {passive:true});
+
+/* ---------------- smooth scroll with inertia ---------------- */
+let targetY=window.scrollY, curY=window.scrollY, smoothing=0.085, smoothing_run=false;
+function maxScroll(){ return document.documentElement.scrollHeight - window.innerHeight; }
+function clampY(v){ return Math.max(0, Math.min(v, maxScroll())); }
+function smoothStep(){
+  curY += (targetY - curY) * smoothing;
+  if(Math.abs(targetY - curY) < 0.4){ curY = targetY; smoothing_run=false; }
+  window.scrollTo(0, curY);
+  if(smoothing_run) requestAnimationFrame(smoothStep);
+}
+window.addEventListener('wheel', e=>{
+  if(e.ctrlKey) return;              // let pinch-zoom pass
+  cx=e.clientX; cy=e.clientY;        // wheel carries cursor pos -> hero reveal works even without mousemove
+  e.preventDefault();
+  targetY = clampY(targetY + e.deltaY * 1.0);
+  if(!smoothing_run){ smoothing_run=true; requestAnimationFrame(smoothStep); }
+}, {passive:false});
+// keep target in sync when scrolled by other means (scrollbar drag, keys, anchor)
+window.addEventListener('scroll', ()=>{ if(!smoothing_run){ targetY = curY = window.scrollY; } }, {passive:true});
+window.addEventListener('keydown', ()=>{ if(!smoothing_run){ targetY = curY = window.scrollY; } });
+
+fitAll();
+updateS2();
+updateFooter();
+
+</script>
+</body>
+</html>

@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>RIO — A Better World</title>
+<style>
+  @font-face{font-family:'Anybody';src:url('assets/fonts/Anybody.ttf') format('truetype-variations');font-weight:100 900;font-stretch:50% 150%;font-display:swap;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{overflow-x:clip;}
+  html,body{background:#fff;}
+  body{font-family:'Anybody',sans-serif;color:#000;}
+  img{display:block;}
+  a{color:inherit;text-decoration:none;}
+
+  .sec{position:relative;width:100vw;overflow:hidden;}
+  .sec>.inner{position:absolute;top:0;left:0;width:1920px;transform-origin:top left;}
+
+  /* fixed logo + menu toggle (color adapts on dark sections) */
+  .rio-logo{position:fixed;z-index:110;transition:filter .3s ease;}
+  .rio-logo img{width:100%;height:100%;display:block;}
+  .menu-toggle{position:fixed;z-index:110;font-family:'Anybody';font-variation-settings:'wght' 400,'wdth' 70;cursor:pointer;line-height:1;user-select:none;transition:color .3s ease;}
+  body.ondark .rio-logo{filter:invert(1);}
+  body.ondark .menu-toggle{color:#fff;}
+
+  /* menu overlay */
+  .menu-panel{position:fixed;top:0;right:0;height:100vh;background:#fff;z-index:100;transform:translateX(100%);transition:transform .6s cubic-bezier(.7,0,.2,1);overflow:hidden;}
+  .menu-panel.open{transform:translateX(0);}
+  .mp-inner{position:absolute;top:0;right:0;width:582px;height:1080px;transform-origin:top right;}
+  .mp-item{position:absolute;right:36px;width:540px;text-align:right;overflow:hidden;line-height:83px;}
+  .mp-item span{display:inline-block;font-family:'Anybody';font-size:80px;line-height:83px;font-variation-settings:'wght' 600,'wdth' 70;color:#000;transform:translateY(110%);transition:color .25s ease;}
+  .mp-item a:hover span{color:#FF5A1F;}
+  .menu-panel.open .mp-item span{transform:translateY(0);transition:transform .75s cubic-bezier(.22,1,.36,1),color .25s ease;}
+  .mp-item.lang span{font-size:36px;line-height:37px;}
+
+  /* ---------- SECTION 1 — hero: dải SVG uốn cong thành vành đai quanh hình tròn ---------- */
+  #s1{background:#f6b2ac;overflow:hidden;}
+  .s1-stage{position:absolute;left:960px;top:540px;}            /* tâm khung 1920×1080 */
+  .s1-circle{position:absolute;left:-540px;top:-540px;width:1080px;height:1080px;}  /* full chiều cao section */
+  .s1-circle img{width:100%;height:100%;display:block;}
+  /* cảnh 3D: nghiêng chéo + phối cảnh; 2 lớp belt (trước/sau) để dải quấn quanh hình tròn */
+  .s1-scene{position:absolute;left:0;top:0;transform:rotate(-15deg);perspective:1700px;}
+  .s1-belt{position:absolute;left:0;top:0;transform-style:preserve-3d;}
+  .s1-belt .slice{position:absolute;left:0;top:0;transform-style:preserve-3d;}
+  .s1-belt .face{position:absolute;left:0;top:0;width:100%;height:100%;background-repeat:no-repeat;backface-visibility:hidden;}
+  .s1-belt .out{background-image:url(assets/ring-blue.svg);}                 /* mặt ngoài: xanh */
+  .s1-belt .in{background-image:url(assets/ring.svg);transform:rotateY(180deg);} /* mặt trong: đen */
+
+  /* ---------- MORPH (Section 2 → 2d) — pinned smart-animate ---------- */
+  #morph{position:relative;width:100vw;background:#fff;}
+  .mstick{position:sticky;top:0;height:100vh;width:100vw;overflow:hidden;background:#fff;transition:background .6s ease;}
+  .mstage{position:absolute;left:0;top:0;width:1920px;height:1080px;transform-origin:top left;}
+  /* disable all transitions when instant-applying step */
+  .notrans,.notrans *{transition:none !important;}
+  /* RIO wordmark — inline SVG, scale+translate để từng chữ vào center */
+  .rioword{position:absolute;left:calc(50% - 297.5px);top:calc(50% - 186px);width:595px;height:372px;transform-origin:center center;opacity:0;z-index:2;transition:transform .7s cubic-bezier(.16,1,.3,1),opacity .6s ease;}
+  .rioword svg{width:595px;height:372px;display:block;overflow:visible;}
+  /* phase-0 captions: "We are" / "who seek for" */
+  .p0cap{position:absolute;left:0;width:1920px;text-align:center;color:#000;font-size:64px;line-height:normal;font-variation-settings:'wght' 600,'wdth' 70;white-space:nowrap;z-index:3;opacity:0;transition:opacity .6s ease;}
+  #p0top{top:254px;}
+  #p0bot{top:762px;}
+  .p0cap .cur{display:inline-block;}
+  /* morph words mask-reveal — 200px theo Figma */
+  .mword{position:absolute;left:0;top:445px;width:1920px;height:250px;text-align:center;overflow:hidden;z-index:3;}
+  .mword span{display:inline-block;color:#fff;font-size:200px;line-height:250px;font-variation-settings:'wght' 700,'wdth' 70;white-space:nowrap;transform:translateY(110%);transition:transform .9s cubic-bezier(.16,1,.3,1);will-change:transform;}
+  /* phase-4: icon center, chữ đè lên trên */
+  #iconcycle{position:absolute;left:50%;top:50%;width:592px;height:592px;transform:translate(-50%,-50%);opacity:0;transition:opacity .6s ease;z-index:2;}
+  #iconcycle img{width:100%;height:100%;}
+  #across{position:absolute;left:0;top:474px;width:1920px;text-align:center;color:#fff;font-size:128px;line-height:100px;font-variation-settings:'wght' 600,'wdth' 70;white-space:nowrap;opacity:0;transition:opacity .6s ease;z-index:3;}
+
+  /* ---------- SECTION 3 — Doing our part (3 service rows) ---------- */
+  #s3h{position:absolute;left:37px;top:100px;width:1262px;font-size:88px;line-height:112px;font-variation-settings:'wght' 700,'wdth' 70;color:#000;}
+  .srow{position:absolute;left:0;width:1920px;height:562px;border-top:1px solid #e2e2e2;opacity:0;transform:translateY(40px);transition:opacity .7s ease,transform .7s cubic-bezier(.22,1,.36,1);}
+  .srow.in{opacity:1;transform:translateY(0);}
+  .srow .stt{position:absolute;left:37px;top:102px;width:560px;font-size:64px;line-height:72px;font-variation-settings:'wght' 600,'wdth' 70;color:#000;}
+  .srow .sdesc{position:absolute;left:978px;top:102px;width:906px;font-size:30px;line-height:40px;font-variation-settings:'wght' 400,'wdth' 100;color:#000;}
+  .srow .sbul{position:absolute;left:978px;width:906px;padding-left:36px;font-size:20px;line-height:24px;font-variation-settings:'wght' 600,'wdth' 100;color:#000;}
+  .srow .sbul::before{content:'';position:absolute;left:6px;top:8px;width:8px;height:8px;border-radius:50%;background:#0013fe;}
+
+  /* ---------- SECTION 4 — What we do (đúng design ABW) ---------- */
+  .s4wm{position:absolute;left:50%;top:103px;transform:translateX(-50%);width:1857px;height:357px;z-index:0;}
+  .s4wm img{width:1857px;height:357px;}
+  .s4num{position:absolute;left:36px;font-size:80px;line-height:normal;font-variation-settings:'wght' 600,'wdth' 70;color:#000;z-index:1;}
+  .s4name{position:absolute;font-size:80px;line-height:normal;font-variation-settings:'wght' 600,'wdth' 70;color:#000;z-index:1;}
+  .s4ico{position:absolute;z-index:1;overflow:hidden;}
+  .s4ico img{display:block;width:100%;height:100%;}
+  .s4line{position:absolute;left:36px;width:1848px;height:1px;background:#e2e2e2;z-index:1;}
+  .s4col{position:absolute;left:978px;width:906px;z-index:1;display:flex;flex-direction:column;gap:36px;}
+  .s4sub{font-size:40px;line-height:60px;font-variation-settings:'wght' 400,'wdth' 100;color:#000;}
+  .s4body{font-size:16px;line-height:24px;font-variation-settings:'wght' 400,'wdth' 100;color:#747474;}
+  .s4grp{display:flex;flex-direction:column;}
+  .s4buls{display:flex;flex-direction:column;gap:16px;}
+  .s4bul{position:relative;padding-left:24px;font-size:16px;line-height:24px;font-variation-settings:'wght' 700,'wdth' 100;color:#000;}
+  .s4bul::before{content:'';position:absolute;left:8px;top:8px;width:8px;height:8px;border-radius:50%;background:#000;}
+  .s4hr{height:1px;background:#e2e2e2;width:100%;}
+  .s4-item{opacity:0;transform:translateY(30px);}
+  #s4.in .s4-item{animation:upIn .8s cubic-bezier(.22,1,.36,1) forwards;}
+  @keyframes upIn{to{opacity:1;transform:translateY(0);}}
+
+  /* ---------- footer (compact) ---------- */
+  .wfoot{position:absolute;left:0;top:0;width:1920px;height:274px;background:#fff;border-top:1px solid #e2e2e2;}
+  .wfoot .flogo{position:absolute;left:36px;top:107px;width:67px;height:40px;}
+  .wfoot .flogo img{width:100%;height:100%;}
+  .ft{position:absolute;font-size:22px;line-height:29px;font-variation-settings:'wght' 400,'wdth' 100;color:#000;}
+</style>
+</head>
+<body>
+
+  <div class="rio-logo" id="rioLogo" style="cursor:pointer" onclick="location.href='index.html'"><img src="assets/logo.svg" alt="RIO"></div>
+  <div class="menu-toggle" id="menuToggle">Menu</div>
+
+  <div class="menu-panel" id="menuPanel">
+    <div class="mp-inner" id="mpInner">
+      <div class="mp-item" style="top:299px"><a href="work.html"><span style="transition-delay:.10s">Work</span></a></div>
+      <div class="mp-item" style="top:422px"><a href="a-better-world.html"><span style="transition-delay:.18s">A-Better-World</span></a></div>
+      <div class="mp-item" style="top:515px"><a href="#"><span style="transition-delay:.26s">Blog</span></a></div>
+      <div class="mp-item" style="top:608px"><a href="#"><span style="transition-delay:.34s">RIO Lab</span></a></div>
+      <div class="mp-item" style="top:731px"><a href="contact.html"><span style="transition-delay:.42s">Contact</span></a></div>
+      <div class="mp-item lang" style="top:1013px"><a href="#"><span style="transition-delay:.50s">EN / VI</span></a></div>
+    </div>
+  </div>
+
+  <!-- SECTION 1 — hero -->
+  <div class="sec" id="s1"><div class="inner">
+    <div class="s1-stage">
+      <div class="s1-scene">
+        <div class="s1-belt" id="s1back"></div>
+        <div class="s1-circle"><img src="assets/circle.svg" alt=""></div>
+        <div class="s1-belt" id="s1front"></div>
+      </div>
+    </div>
+  </div></div>
+
+  <!-- MORPH: Section 2 → 2d (pinned, cobalt) -->
+  <div id="morph">
+    <div class="mstick">
+      <div class="mstage" id="mstage">
+        <div id="iconcycle"><img id="iconImg" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==" alt=""></div>
+        <div class="rioword" id="rioword"></div>
+        <div class="p0cap" id="p0top"><span id="p0topt"></span><span class="cur" id="p0topc"></span></div>
+        <div class="p0cap" id="p0bot"><span id="p0bott"></span><span class="cur" id="p0botc"></span></div>
+        <div class="mword" id="w_right"><span>Righteousness</span></div>
+        <div class="mword" id="w_indepth"><span>In-Depth</span></div>
+        <div class="mword" id="w_orig"><span>Originality</span></div>
+        <div id="across">across everything we do.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 3 — Doing our part -->
+  <div class="sec" id="s3"><div class="inner">
+    <div id="s3h">Doing our part with our best for the world we share.</div>
+
+    <div class="srow" style="top:440px">
+      <div class="stt">Sustainable BRANDING</div>
+      <div class="sdesc">Uncovering your brand’s soul to drive meaningful &amp; sustainable growth.</div>
+      <div class="sbul" style="top:258px">eXplore originality</div>
+      <div class="sbul" style="top:298px">eXploit potentials</div>
+      <div class="sbul" style="top:338px">eXpress identity</div>
+    </div>
+
+    <div class="srow" style="top:1002px">
+      <div class="stt">COMMUNICATION for Social Behavior Change</div>
+      <div class="sdesc">Driven by heart. Committed to a better world.</div>
+      <div class="sbul" style="top:258px">Right challenge framing</div>
+      <div class="sbul" style="top:298px">In-depth research — Touching insight</div>
+      <div class="sbul" style="top:338px">Original, root-cause-driven solutions</div>
+    </div>
+
+    <div class="srow" style="top:1564px">
+      <div class="stt">CREATIVE WORKS for a better world</div>
+      <div class="sdesc">Purpose-driven works for meaningful impact.</div>
+      <div class="sbul" style="top:258px">Project: Đúng Look</div>
+      <div class="sbul" style="top:298px">Project A</div>
+      <div class="sbul" style="top:338px">Project B</div>
+    </div>
+  </div></div>
+
+  <!-- SECTION 4 — What we do (đúng design) -->
+  <div class="sec" id="s4"><div class="inner">
+    <div class="s4wm"><img src="assets/whatwedo.png" alt="What we do"></div>
+
+    <div class="s4-item">
+      <div class="s4num" style="top:542px">1.</div>
+      <div class="s4name" style="left:103px;top:542px">Sustainable Branding</div>
+      <div class="s4ico" style="left:699px;top:553px;width:195px;height:142px"><img src="assets/s4ico1.svg" alt=""></div>
+      <div class="s4col" style="top:554px">
+        <div class="s4grp"><div class="s4sub">Brand Strategy</div><div class="s4body">Sustainable growth starts with being deeply rooted with your core authentic self, which is constantly cultivated and challenged to reach its highest potential through market interaction. We delve into your brand’s practical operation to uncover that kind of brand soul that promises to bring a meaningful and inspirational brand growth journey:</div></div>
+        <div class="s4buls">
+          <div class="s4bul">Empower your core value and unleash inner power</div>
+          <div class="s4bul">Live your values and break free from external pressure</div>
+          <div class="s4bul">Bring your brand to real life by genuine connection</div>
+        </div>
+        <div class="s4hr"></div>
+        <div class="s4grp"><div class="s4sub">Brand Centric Design</div><div class="s4body">We offer multiple assets, from brand identity, marcom materials, print design to exhibition / event designs. Sustainable design practices applied with attention towards the mutual aims:</div></div>
+        <div class="s4buls">
+          <div class="s4bul">Optimize budget</div>
+          <div class="s4bul">Maximize product life cycle</div>
+          <div class="s4bul">Easy to use</div>
+          <div class="s4bul">Practical functions</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="s4line" style="top:1261px"></div>
+
+    <div class="s4-item">
+      <div class="s4num" style="top:1311px">2.</div>
+      <div class="s4name" style="left:105px;top:1311px">Communication for<br>Social Behavior Change</div>
+      <div class="s4ico" style="left:755px;top:1399px;width:64px;height:64px"><img src="assets/s4ico2.svg" style="position:absolute;left:1px;top:3px;width:62.46px;height:57.83px" alt=""></div>
+      <div class="s4col" style="top:1311px">
+        <div class="s4grp"><div class="s4body">We have branding and creative expertise, but driven by the passion and ambition of a-better-world. Thus, we are always concerned with People and the Planet in every project. Sharing common purposes, we wish to bring our expertise and join hands with NGOs in creating a better world.</div></div>
+        <div class="s4buls">
+          <div class="s4bul">Reframe the challenge to address the key issue for communication efficiency.</div>
+          <div class="s4bul">Deep &amp; thorough understanding for touching insight.</div>
+          <div class="s4bul">Original solutions that address challenges at their core.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="s4line" style="top:1610px"></div>
+
+    <div class="s4-item">
+      <div class="s4num" style="top:1659px">3.</div>
+      <div class="s4name" style="left:105px;top:1659px">Creative Works<br>for a better world</div>
+      <div class="s4ico" style="left:626px;top:1760px;width:68.08px;height:47.47px"><img src="assets/s4ico3.svg" alt=""></div>
+      <div class="s4col" style="top:1660px">
+        <div class="s4grp"><div class="s4body">For those who share our vision of building a better world, we welcome collaboration—creating work that inspires and drives positive impact.</div></div>
+      </div>
+    </div>
+  </div></div>
+
+  <!-- FOOTER -->
+  <div class="sec" id="footer"><div class="inner">
+    <div class="wfoot">
+      <div class="flogo"><img src="assets/logo.svg" alt="RIO"></div>
+      <div class="ft" style="left:118px;top:125px">@2026</div>
+      <div class="ft" style="left:36px;top:163px">SH23 - H6 StarLake,<br>Xuan Tao, Bac Tu Liem, Hanoi</div>
+      <div class="ft" style="left:660px;top:102px;width:600px;text-align:center">+84 24 6259 6864</div>
+      <div class="ft" style="left:660px;top:147px;width:600px;text-align:center">agency@rio.vn</div>
+      <div class="ft" style="left:660px;top:192px;width:600px;text-align:center">www.agency.rio.vn</div>
+      <div class="ft" style="left:1584px;top:102px;width:300px;text-align:right">Facebook</div>
+      <div class="ft" style="left:1584px;top:147px;width:300px;text-align:right">Instagram</div>
+      <div class="ft" style="left:1584px;top:192px;width:300px;text-align:right">Behance</div>
+    </div>
+  </div></div>
+
+<script>
+const DESIGN_W=1920;
+let scale=1;
+const SECS=[{el:'s1',h:1080},{el:'s3',h:2126},{el:'s4',h:1959},{el:'footer',h:274}];
+function fitAll(){
+  scale=window.innerWidth/DESIGN_W;
+  SECS.forEach(s=>{
+    const sec=document.getElementById(s.el);
+    sec.style.height=(s.h*scale)+'px';
+    const inner=sec.querySelector('.inner');
+    inner.style.transform='scale('+scale+')';inner.style.height=s.h+'px';
+  });
+  // morph stage: scale by width, center the 1080 band vertically
+  const ms=document.getElementById('mstage');
+  const ty=(window.innerHeight-1080*scale)/2;
+  ms.style.transform='translateY('+ty+'px) scale('+scale+')';
+  document.getElementById('morph').style.height=window.innerHeight+'px'; // đúng 1 viewport — scroll bị khóa, step do wheel
+  const mt=document.getElementById('menuToggle');
+  mt.style.right=(36*scale)+'px';mt.style.top=(55*scale)+'px';mt.style.fontSize=(64*scale)+'px';
+  const rl=document.getElementById('rioLogo');
+  rl.style.left=(36*scale)+'px';rl.style.top=(30*scale)+'px';rl.style.width=(121*scale)+'px';rl.style.height=(76*scale)+'px';
+  const mpScale=window.innerHeight/1080;
+  document.getElementById('menuPanel').style.width=(582*mpScale)+'px';
+  document.getElementById('mpInner').style.transform='scale('+mpScale+')';
+}
+window.addEventListener('resize',fitAll);
+
+// menu
+const _panel=document.getElementById('menuPanel'),_toggle=document.getElementById('menuToggle');
+let menuOpen=false;
+function setMenu(o){menuOpen=o;_panel.classList.toggle('open',o);_toggle.textContent=o?'Close':'Menu';}
+_toggle.addEventListener('click',()=>setMenu(!menuOpen));
+document.addEventListener('keydown',e=>{if(e.key==='Escape')setMenu(false);});
+
+const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+const rgb=c=>'rgb('+(c[0]|0)+','+(c[1]|0)+','+(c[2]|0)+')';
+
+/* -------- SECTION 1 — dựng dải chữ 3D quấn quanh vòng tròn -------- */
+(function buildBelt(){
+  const back=document.getElementById('s1back'),front=document.getElementById('s1front');
+  const STRIP_W=3727.74, STRIP_H=180.99;   // kich thuoc dai ring.svg
+  const R=520;                              // ban kinh vanh dai
+  const C=2*Math.PI*R;                      // chu vi = chieu rong dai khi hien thi (quan dung 1 vong)
+  const sc=C/STRIP_W, bandH=STRIP_H*sc;     // ti le + chieu cao dai
+  const N=96, stepA=360/N, sliceW=C/N;
+  const SL=[];
+  const bg=C+'px '+bandH+'px';
+  for(let i=0;i<N;i++){
+    const d=document.createElement('div');
+    d.className='slice';
+    d.style.width=(sliceW+1)+'px';
+    d.style.height=bandH+'px';
+    d.style.marginLeft=(-sliceW/2)+'px';
+    d.style.marginTop=(-bandH/2)+'px';
+    d.style.transform=`rotateY(${i*stepA}deg) translateZ(${R}px)`;
+    // 2 mặt: out (xanh, hướng ra ngoài) + in (đen, hướng vào trong)
+    const out=document.createElement('div'),inn=document.createElement('div');
+    out.className='face out'; inn.className='face in';
+    out.style.backgroundSize=bg; inn.style.backgroundSize=bg;
+    out.style.backgroundPositionX=(-i*sliceW)+'px';
+    inn.style.backgroundPositionX=(-i*sliceW)+'px';
+    d.appendChild(out); d.appendChild(inn);
+    d._ang=i*stepA;
+    front.appendChild(d); SL.push(d);
+  }
+  let theta=0;
+  (function frame(){
+    theta=(theta+0.15)%360;
+    const t=`rotateX(16deg) rotateY(${theta}deg)`;
+    back.style.transform=t; front.style.transform=t;
+    for(const d of SL){
+      const tgt=Math.cos((d._ang+theta)*Math.PI/180)>0?front:back;
+      if(d.parentNode!==tgt) tgt.appendChild(d);
+    }
+    requestAnimationFrame(frame);
+  })();
+})();
+
+/* ================================================================
+   MORPH — smart-animate: một RIO wordmark zoom/dịch giữa các phase
+   Step 0: trắng  – logo RIO (scale 1) + typing
+   Step 1: xanh   – logo scale BIG, R vào center, R=#63CFFF, "Righteousness"
+   Step 2: tím    – logo dịch, I vào center, I=#FF8831,  "In-Depth"
+   Step 3: lá     – logo dịch, O vào center, O=#FFABAC,  "Originality"
+   Step 4: đen    – logo ẩn, icon cycling, "across everything we do."
+   ================================================================ */
+const BIG=2.9;
+// offset (px trong viewBox 595) để đưa từng chữ vào center sau khi scale
+const TX_R=(297.5-115.2)*BIG;   //  528.67 — dịch phải để R vào center
+const TX_I=(297.5-283.85)*BIG;  //   39.59
+const TX_O=(297.5-468.55)*BIG;  // -496.05 — dịch trái để O vào center
+
+const STEPS=[
+//  bg              tx     sc   gFill(R,I,O)              gOp      wR       wI       wO     p0 across icon
+  {bg:[255,255,255],tx:0,  sc:1,  gF:['#000','#000','#000'],gO:[1,1,1], wR:'110%',wI:'110%',wO:'110%',p0:1,ac:0,ic:0},
+  {bg:[0,19,254],   tx:TX_R,sc:BIG,gF:['#63CFFF','#fff','#fff'],gO:[1,0,0],wR:'0%',  wI:'110%',wO:'110%',p0:0,ac:0,ic:0},
+  {bg:[165,12,110], tx:TX_I,sc:BIG,gF:['#63CFFF','#FF8831','#fff'],gO:[0,1,0],wR:'-110%',wI:'0%',  wO:'110%',p0:0,ac:0,ic:0},
+  {bg:[0,147,69],   tx:TX_O,sc:BIG,gF:['#fff','#FF8831','#FFABAC'],gO:[0,0,1],wR:'-110%',wI:'-110%',wO:'0%',  p0:0,ac:0,ic:0},
+  {bg:[0,0,0],      tx:TX_O,sc:BIG,gF:['#fff','#fff','#FFABAC'],   gO:[0,0,0],wR:'-110%',wI:'-110%',wO:'-110%',p0:0,ac:1,ic:1},
+];
+
+const morph=document.getElementById('morph');
+const mstage=document.getElementById('mstage');
+const mstick=document.querySelector('.mstick');
+const rioword=document.getElementById('rioword');
+const wR=document.querySelector('#w_right span'),wI=document.querySelector('#w_indepth span'),wO=document.querySelector('#w_orig span');
+const across=document.getElementById('across'),iconcycle=document.getElementById('iconcycle'),iconImg=document.getElementById('iconImg');
+const p0top=document.getElementById('p0top'),p0bot=document.getElementById('p0bot');
+let glyphs=[]; // [R path, I path, O path] sau khi SVG load
+
+// Load rio-word.svg inline để control fill từng path
+fetch('assets/rio-word.svg').then(r=>r.text()).then(svg=>{
+  rioword.innerHTML=svg;
+  const s=rioword.querySelector('svg');
+  if(s){s.setAttribute('width','595');s.setAttribute('height','372');s.style.overflow='visible';}
+  glyphs=[...rioword.querySelectorAll('path')];
+  applyStep(0,true); // set glyph state ngay sau load
+});
+
+let morphStep=0;
+let morphEntered=false; // đã từng vào morph (logo đã appear)
+let locked=false;       // scroll bị khóa, mỗi wheel = 1 step
+let lockY=0;            // scrollY cố định khi locked
+
+function applyStep(s,instant){
+  const st=STEPS[s];
+  if(instant) mstage.classList.add('notrans');
+
+  mstick.style.background=rgb(st.bg);
+  rioword.style.transform=`translateX(${st.tx}px) scale(${st.sc})`;
+  rioword.style.opacity=(morphEntered&&s<4)?'1':'0';
+
+  if(glyphs.length===3){
+    glyphs.forEach((g,i)=>{g.style.fill=st.gF[i];g.style.opacity=st.gO[i];});
+  }
+  p0top.style.opacity=st.p0;
+  p0bot.style.opacity=st.p0;
+  wR.style.transform=`translateY(${st.wR})`;
+  wI.style.transform=`translateY(${st.wI})`;
+  wO.style.transform=`translateY(${st.wO})`;
+  across.style.opacity=st.ac;
+  iconcycle.style.opacity=st.ic;
+  document.body.classList.toggle('ondark',s>0);
+
+  if(s===0 && morphEntered) triggerTyping(); // type khi hiện phase-0
+  if(instant) requestAnimationFrame(()=>requestAnimationFrame(()=>mstage.classList.remove('notrans')));
+}
+
+function goStep(s){
+  morphStep=clamp(s,0,4);
+  applyStep(morphStep,false);
+}
+
+// khóa scroll tại morphTop, set step khởi đầu (0 khi vào từ trên, 4 khi vào từ dưới)
+function lockMorph(startStep){
+  locked=true; running=false;
+  lockY=morph.offsetTop;
+  targetY=curY=lockY;
+  window.scrollTo(0,lockY);
+  if(!morphEntered){ morphEntered=true; rioword.style.opacity='1'; } // appear logo
+  goStep(startStep);
+}
+function unlockMorph(){ locked=false; document.body.classList.remove('ondark'); }
+
+/* --- typing "We are | who seek for" (pattern từ index.html) --- */
+let typed=false;
+function triggerTyping(){
+  if(typed)return;typed=true;
+  const A='We are',B='who seek for';
+  const at=document.getElementById('p0topt'),bt=document.getElementById('p0bott');
+  const tc=document.getElementById('p0topc'),bc=document.getElementById('p0botc');
+  tc.textContent='|';bc.textContent='';
+  let i=0;
+  (function type(){at.textContent=A.slice(0,i);i++;
+    if(i<=A.length)setTimeout(type,28);
+    else{tc.textContent='';bc.textContent='|';let j=0;
+      (function type2(){bt.textContent=B.slice(0,j);j++;
+        if(j<=B.length)setTimeout(type2,28);else bc.textContent='';
+      })();
+    }
+  })();
+}
+
+/* --- wheel: khóa scroll trong morph, mỗi wheel = 1 step --- */
+let wheelCooldown=false;
+function cool(){ if(wheelCooldown)return false; wheelCooldown=true; setTimeout(()=>{wheelCooldown=false;},760); return true; }
+function freeScroll(delta){
+  const maxS=document.documentElement.scrollHeight-window.innerHeight;
+  targetY=clamp(targetY+delta,0,maxS);
+  if(!running){running=true;requestAnimationFrame(raf);}
+}
+
+function onWheel(e){
+  if(e.ctrlKey)return;
+  e.preventDefault();
+  const dir=e.deltaY>0?1:-1;
+  const mTop=morph.offsetTop;
+
+  if(locked){
+    if(!cool()) return;          // 1 cú vuốt = đúng 1 nhịp (kể cả nhịp thoát) → không trôi
+    if(dir>0){ // cuộn xuống
+      if(morphStep<4) goStep(morphStep+1);
+      else { unlockMorph(); freeScroll(e.deltaY); } // thoát xuống section 3
+    }else{     // cuộn lên
+      if(morphStep>0) goStep(morphStep-1);
+      else { unlockMorph(); freeScroll(e.deltaY); } // thoát lên section 1
+    }
+    return;
+  }
+
+  // chưa khóa: phát hiện thời điểm scrollY vượt qua morphTop → khóa
+  const cur=targetY;
+  if(dir>0 && cur<mTop && cur+e.deltaY>=mTop){ lockMorph(0); return; } // vào từ trên
+  if(dir<0 && cur>mTop && cur+e.deltaY<=mTop){ lockMorph(4); return; } // vào từ dưới
+  freeScroll(e.deltaY);
+}
+window.addEventListener('wheel',onWheel,{passive:false});
+
+/* --- smooth scroll inertia (ngoài morph) --- */
+let targetY=window.scrollY,curY=window.scrollY,running=false;
+function raf(){
+  curY+=(targetY-curY)*0.085;
+  if(Math.abs(targetY-curY)<0.4){curY=targetY;running=false;}
+  window.scrollTo(0,curY);
+  if(running)requestAnimationFrame(raf);
+}
+// giữ scroll đứng yên khi locked (chống kéo scrollbar); sync khi free
+window.addEventListener('scroll',()=>{
+  if(locked){ if(Math.abs(window.scrollY-lockY)>1)window.scrollTo(0,lockY); return; }
+  if(!running) targetY=curY=window.scrollY;
+},{passive:true});
+
+/* --- phase-4 icon cycling --- */
+let iconNames=[],ici=0;
+fetch('layout.json').then(r=>r.json()).then(d=>{iconNames=d.icons.map(x=>x.n);});
+setInterval(()=>{if(parseFloat(iconcycle.style.opacity||0)>0.05&&iconNames.length){iconImg.src='output/'+iconNames[ici%iconNames.length]+'.svg';ici++;}},140);
+
+/* --- section 3+4 reveal --- */
+document.querySelectorAll('.srow').forEach(el=>new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)e.target.classList.add('in');}),{threshold:.25}).observe(el));
+new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting)document.getElementById('s4').classList.add('in');}),{threshold:.2}).observe(document.getElementById('s4'));
+
+applyStep(0,true);
+fitAll();
+</script>
+</body>
+</html>

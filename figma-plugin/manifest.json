@@ -1,0 +1,12 @@
+{
+  "name": "RIO Icon Filler",
+  "id": "rio-icon-filler-local",
+  "api": "1.0.0",
+  "main": "code.js",
+  "ui": "ui.html",
+  "editorType": ["figma"],
+  "networkAccess": {
+    "allowedDomains": ["*"],
+    "reasoning": "Fetch icon SVGs from local dev server to fill the Icons pallete frame."
+  }
+}
