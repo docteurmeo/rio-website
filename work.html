@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>RIO — Work</title>
 <link rel="stylesheet" href="base.css">
+<script src="menu.js" defer></script>
 <style>
 
   .sec{position:relative;width:100vw;overflow:hidden;}
@@ -163,25 +164,9 @@ function fitAll(){
   const inner=sec.querySelector('.inner');
   inner.style.transform='scale('+scale+')';
   inner.style.height='3591px';
-  const mt=document.getElementById('menuToggle');
-  mt.style.right=(36*scale)+'px';mt.style.top=(55*scale)+'px';mt.style.fontSize=(64*scale)+'px';
-  const rl=document.getElementById('rioLogo');
-  rl.style.left=(36*scale)+'px';rl.style.top=(30*scale)+'px';rl.style.width=(121*scale)+'px';rl.style.height=(76*scale)+'px';
-  const mpScale=window.innerHeight/1080;
-  document.getElementById('menuPanel').style.width=(582*mpScale)+'px';
-  document.getElementById('mpInner').style.transform='scale('+mpScale+')';
 }
 window.addEventListener('resize',fitAll);
 fitAll();
-
-const _panel=document.getElementById('menuPanel'),_toggle=document.getElementById('menuToggle');
-let menuOpen=false;
-function setMenu(o){ menuOpen=o;
-  if(o){ _panel.classList.remove('closing'); _panel.classList.add('open'); _toggle.textContent='Close'; }
-  else { _panel.classList.add('closing'); _panel.classList.remove('open'); _toggle.textContent='Menu';
-    setTimeout(()=>{ if(!menuOpen) _panel.classList.remove('closing'); },650); } }
-_toggle.addEventListener('click',()=>setMenu(!menuOpen));
-document.addEventListener('keydown',e=>{if(e.key==='Escape')setMenu(false);});
 </script>
 </body>
 </html>

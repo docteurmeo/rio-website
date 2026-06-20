@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>RIO — Home (full)</title>
 <link rel="stylesheet" href="base.css">
+<script src="menu.js" defer></script>
 <style>
   /* generic width-scaled section: .inner is 1920-wide design space */
   .sec{position:relative;width:100vw;overflow:hidden;}
@@ -238,28 +239,8 @@ function fitAll(){
   });
   // scroll room = footer height (reveal) + 1 viewport extra (slow "Let's talk" draw after fully revealed)
   document.querySelector('.above').style.marginBottom=(793*scale + window.innerHeight)+'px';
-  // menu overlay scales by viewport height so all items fit
-  const mpScale=window.innerHeight/1080;
-  document.getElementById('menuPanel').style.width=(582*mpScale)+'px';
-  document.getElementById('mpInner').style.transform='scale('+mpScale+')';
-  // toggle sits exactly where the hero header "Menu" is (scaled by width)
-  const mt=document.getElementById('menuToggle');
-  mt.style.right=(36*scale)+'px'; mt.style.top=(55*scale)+'px'; mt.style.fontSize=(64*scale)+'px';
-  const rl=document.getElementById('rioLogo');
-  rl.style.left=(36*scale)+'px'; rl.style.top=(30*scale)+'px';
-  rl.style.width=(121*scale)+'px'; rl.style.height=(76*scale)+'px';
   layoutS2();
 }
-// Menu <-> Close: same element morphs, panel slides in/out
-const _panel=document.getElementById('menuPanel'), _toggle=document.getElementById('menuToggle');
-let menuOpen=false;
-function setMenu(o){ menuOpen=o;
-  if(o){ _panel.classList.remove('closing'); _panel.classList.add('open'); _toggle.textContent='Close'; } // open: stagger reveal (CSS)
-  else { // close: .closing holds full text at 0 → slides OUT intact with panel (no crop); reset after panel exits
-    _panel.classList.add('closing'); _panel.classList.remove('open'); _toggle.textContent='Menu';
-    setTimeout(()=>{ if(!menuOpen) _panel.classList.remove('closing'); },650); } }
-_toggle.addEventListener('click',()=>setMenu(!menuOpen));
-document.addEventListener('keydown',e=>{ if(e.key==='Escape')setMenu(false); });
 window.addEventListener('resize', fitAll);
 
 /* ---------------- HERO: icons reveal + ink soak ---------------- */
